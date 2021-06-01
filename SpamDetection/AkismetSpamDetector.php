@@ -3,6 +3,7 @@
 namespace FOS\MessageBundle\SpamDetection;
 
 use FOS\MessageBundle\FormModel\NewThreadMessage;
+use FOS\MessageBundle\Model\ParticipantInterface;
 use FOS\MessageBundle\Security\ParticipantProviderInterface;
 use Ornicar\AkismetBundle\Akismet\AkismetInterface;
 
@@ -27,10 +28,12 @@ class AkismetSpamDetector implements SpamDetectorInterface
     /**
      * {@inheritdoc}
      */
-    public function isSpam(NewThreadMessage $message)
+    public function isSpam(NewThreadMessage $message, ParticipantInterface $participant = null)
     {
+        $participant = $participant ?: $this->participantProvider->getAuthenticatedParticipant();
+
         return $this->akismet->isSpam(array(
-            'comment_author' => (string) $this->participantProvider->getAuthenticatedParticipant(),
+            'comment_author' => (string) $participant,
             'comment_content' => $message->getBody(),
         ));
     }

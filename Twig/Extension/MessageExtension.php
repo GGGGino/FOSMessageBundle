@@ -42,46 +42,58 @@ class MessageExtension extends AbstractExtension
     /**
      * Tells if this readable (thread or message) is read by the current user.
      *
+     * @param ReadableInterface $readable
+     * @param ParticipantInterface|null $participant
+     *
      * @return bool
      */
-    public function isRead(ReadableInterface $readable)
+    public function isRead(ReadableInterface $readable, ParticipantInterface $participant = null)
     {
-        return $readable->isReadByParticipant($this->getAuthenticatedParticipant());
+        $realParticipant = $participant ?: $this->getAuthenticatedParticipant();
+
+        return $readable->isReadByParticipant($realParticipant);
     }
 
     /**
      * Checks if the participant can mark a thread as deleted.
      *
      * @param ThreadInterface $thread
+     * @param ParticipantInterface|null $participant
      *
      * @return bool true if participant can mark a thread as deleted, false otherwise
      */
-    public function canDeleteThread(ThreadInterface $thread)
+    public function canDeleteThread(ThreadInterface $thread, ParticipantInterface $participant = null)
     {
-        return $this->authorizer->canDeleteThread($thread);
+        $realParticipant = $participant ?: $this->getAuthenticatedParticipant();
+
+        return $this->authorizer->canDeleteThread($thread, $realParticipant);
     }
 
     /**
      * Checks if the participant has marked the thread as deleted.
      *
      * @param ThreadInterface $thread
+     * @param ParticipantInterface|null $participant
      *
      * @return bool true if participant has marked the thread as deleted, false otherwise
      */
-    public function isThreadDeletedByParticipant(ThreadInterface $thread)
+    public function isThreadDeletedByParticipant(ThreadInterface $thread, ParticipantInterface $participant = null)
     {
-        return $thread->isDeletedByParticipant($this->getAuthenticatedParticipant());
+        $realParticipant = $participant ?: $this->getAuthenticatedParticipant();
+
+        return $thread->isDeletedByParticipant($realParticipant);
     }
 
     /**
      * Gets the number of unread messages for the current user.
      *
+     * @param ParticipantInterface|null $participant
      * @return int
      */
-    public function getNbUnread()
+    public function getNbUnread(ParticipantInterface $participant = null)
     {
         if (null === $this->nbUnreadMessagesCache) {
-            $this->nbUnreadMessagesCache = $this->provider->getNbUnreadMessages();
+            $this->nbUnreadMessagesCache = $this->provider->getNbUnreadMessages($participant);
         }
 
         return $this->nbUnreadMessagesCache;

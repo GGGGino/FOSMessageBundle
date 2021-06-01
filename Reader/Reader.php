@@ -48,13 +48,14 @@ class Reader implements ReaderInterface
     /**
      * {@inheritdoc}
      */
-    public function markAsRead(ReadableInterface $readable)
+    public function markAsRead(ReadableInterface $readable, ParticipantInterface $participant = null)
     {
-        $participant = $this->getAuthenticatedParticipant();
-        if ($readable->isReadByParticipant($participant)) {
+        $realParticipant = $participant ?: $this->getAuthenticatedParticipant();
+
+        if ($readable->isReadByParticipant($realParticipant)) {
             return;
         }
-        $this->readableManager->markAsReadByParticipant($readable, $participant);
+        $this->readableManager->markAsReadByParticipant($readable, $realParticipant);
 
         $this->dispatcher->dispatch(FOSMessageEvents::POST_READ, new ReadableEvent($readable));
     }
@@ -62,13 +63,14 @@ class Reader implements ReaderInterface
     /**
      * {@inheritdoc}
      */
-    public function markAsUnread(ReadableInterface $readable)
+    public function markAsUnread(ReadableInterface $readable, ParticipantInterface $participant = null)
     {
-        $participant = $this->getAuthenticatedParticipant();
-        if (!$readable->isReadByParticipant($participant)) {
+        $realParticipant = $participant ?: $this->getAuthenticatedParticipant();
+
+        if (!$readable->isReadByParticipant($realParticipant)) {
             return;
         }
-        $this->readableManager->markAsUnreadByParticipant($readable, $participant);
+        $this->readableManager->markAsUnreadByParticipant($readable, $realParticipant);
 
         $this->dispatcher->dispatch(FOSMessageEvents::POST_UNREAD, new ReadableEvent($readable));
     }

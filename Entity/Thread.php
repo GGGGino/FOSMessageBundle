@@ -121,6 +121,13 @@ abstract class Thread extends BaseThread
     public function isParticipant(ParticipantInterface $participant)
     {
         return $this->getParticipantsCollection()->contains($participant);
+//        return $this->getParticipantsCollection()->exists(function($key, ParticipantInterface $participantTemp) use ($participant) {
+//            if ($participant->getId() === $participantTemp->getId()) {
+//                return true;
+//            }
+//
+//            return false;
+//        });
     }
 
     /**

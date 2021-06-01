@@ -2,6 +2,7 @@
 
 namespace FOS\MessageBundle\Reader;
 
+use FOS\MessageBundle\Model\ParticipantInterface;
 use FOS\MessageBundle\Model\ReadableInterface;
 
 /**
@@ -13,11 +14,15 @@ interface ReaderInterface
 {
     /**
      * Marks the readable as read by the current authenticated user.
+     * @param ReadableInterface $readable
+     * @param ParticipantInterface|null $participant
      */
-    public function markAsRead(ReadableInterface $readable);
+    public function markAsRead(ReadableInterface $readable, ParticipantInterface $participant = null);
 
     /**
      * Marks the readable as unread by the current authenticated user.
+     * @param ReadableInterface $readable
+     * @param ParticipantInterface|null $participant
      */
-    public function markAsUnread(ReadableInterface $readable);
+    public function markAsUnread(ReadableInterface $readable, ParticipantInterface $participant = null);
 }

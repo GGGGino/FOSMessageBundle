@@ -36,17 +36,21 @@ class Finder implements FinderInterface
     /**
      * {@inheritdoc}
      */
-    public function find(Query $query)
+    public function find(Query $query, ParticipantInterface $participant = null)
     {
-        return $this->threadManager->findParticipantThreadsBySearch($this->getAuthenticatedParticipant(), $query->getEscaped());
+        $realParticipant = $participant ?: $this->getAuthenticatedParticipant();
+
+        return $this->threadManager->findParticipantThreadsBySearch($realParticipant, $query->getEscaped());
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getQueryBuilder(Query $query)
+    public function getQueryBuilder(Query $query, ParticipantInterface $participant = null)
     {
-        return $this->threadManager->getParticipantThreadsBySearchQueryBuilder($this->getAuthenticatedParticipant(), $query->getEscaped());
+        $realParticipant = $participant ?: $this->getAuthenticatedParticipant();
+
+        return $this->threadManager->getParticipantThreadsBySearchQueryBuilder($realParticipant, $query->getEscaped());
     }
 
     /**

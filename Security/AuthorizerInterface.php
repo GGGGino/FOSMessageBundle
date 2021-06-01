@@ -18,9 +18,10 @@ interface AuthorizerInterface
      *
      * @param ThreadInterface $thread
      *
+     * @param ParticipantInterface|null $participant
      * @return bool
      */
-    public function canSeeThread(ThreadInterface $thread);
+    public function canSeeThread(ThreadInterface $thread, ParticipantInterface $participant = null);
 
     /**
      * Tells if the current participant is allowed
@@ -28,9 +29,10 @@ interface AuthorizerInterface
      *
      * @param ThreadInterface $thread
      *
+     * @param ParticipantInterface|null $participant
      * @return bool
      */
-    public function canDeleteThread(ThreadInterface $thread);
+    public function canDeleteThread(ThreadInterface $thread, ParticipantInterface $participant = null);
 
     /**
      * Tells if the current participant is allowed

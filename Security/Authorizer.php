@@ -25,17 +25,25 @@ class Authorizer implements AuthorizerInterface
     /**
      * {@inheritdoc}
      */
-    public function canSeeThread(ThreadInterface $thread)
+    public function canSeeThread(ThreadInterface $thread, ParticipantInterface $participant = null)
     {
-        return $this->getAuthenticatedParticipant() && $thread->isParticipant($this->getAuthenticatedParticipant());
+        $realParticipant = $participant ?: $this->getAuthenticatedParticipant();
+//        var_dump(
+//            get_class($realParticipant),
+//            $realParticipant->getId(),
+//            $thread->isParticipant($realParticipant),
+//            $thread->getId(),
+//            array_map(function($item) { return $item->getId(); }, $thread->getParticipants())
+//        );
+        return $realParticipant && $thread->isParticipant($realParticipant);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function canDeleteThread(ThreadInterface $thread)
+    public function canDeleteThread(ThreadInterface $thread, ParticipantInterface $participant = null)
     {
-        return $this->canSeeThread($thread);
+        return $this->canSeeThread($thread, $participant);
     }
 
     /**

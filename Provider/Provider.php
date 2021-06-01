@@ -65,49 +65,51 @@ class Provider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getInboxThreads()
+    public function getInboxThreads(ParticipantInterface $participant = null)
     {
-        $participant = $this->getAuthenticatedParticipant();
+        $realParticipant = $participant ?: $this->getAuthenticatedParticipant();
 
-        return $this->threadManager->findParticipantInboxThreads($participant);
+        return $this->threadManager->findParticipantInboxThreads($realParticipant);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getSentThreads()
+    public function getSentThreads(ParticipantInterface $participant = null)
     {
-        $participant = $this->getAuthenticatedParticipant();
+        $realParticipant = $participant ?: $this->getAuthenticatedParticipant();
 
-        return $this->threadManager->findParticipantSentThreads($participant);
+        return $this->threadManager->findParticipantSentThreads($realParticipant);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getDeletedThreads()
+    public function getDeletedThreads(ParticipantInterface $participant = null)
     {
-        $participant = $this->getAuthenticatedParticipant();
+        $realParticipant = $participant ?: $this->getAuthenticatedParticipant();
 
-        return $this->threadManager->findParticipantDeletedThreads($participant);
+        return $this->threadManager->findParticipantDeletedThreads($realParticipant);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getThread($threadId)
+    public function getThread($threadId, ParticipantInterface $participant = null)
     {
+        $realParticipant = $participant ?: $this->getAuthenticatedParticipant();
+
         $thread = $this->threadManager->findThreadById($threadId);
         if (!$thread) {
             throw new NotFoundHttpException('There is no such thread');
         }
-        if (!$this->authorizer->canSeeThread($thread)) {
+        if (!$this->authorizer->canSeeThread($thread, $realParticipant)) {
             throw new AccessDeniedException('You are not allowed to see this thread');
         }
         // Load the thread messages before marking them as read
         // because we want to see the unread messages
         $thread->getMessages();
-        $this->threadReader->markAsRead($thread);
+        $this->threadReader->markAsRead($thread, $realParticipant);
 
         return $thread;
     }
@@ -115,9 +117,11 @@ class Provider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getNbUnreadMessages()
+    public function getNbUnreadMessages(ParticipantInterface $participant = null)
     {
-        return $this->messageManager->getNbUnreadMessageByParticipant($this->getAuthenticatedParticipant());
+        $realParticipant = $participant ?: $this->getAuthenticatedParticipant();
+
+        return $this->messageManager->getNbUnreadMessageByParticipant($realParticipant);
     }
 
     /**

@@ -49,12 +49,14 @@ class Deleter implements DeleterInterface
     /**
      * {@inheritdoc}
      */
-    public function markAsDeleted(ThreadInterface $thread)
+    public function markAsDeleted(ThreadInterface $thread, ParticipantInterface $participant = null)
     {
-        if (!$this->authorizer->canDeleteThread($thread)) {
+        $realParticipant = $participant ?: $this->getAuthenticatedParticipant();
+
+        if (!$this->authorizer->canDeleteThread($thread, $realParticipant)) {
             throw new AccessDeniedException('You are not allowed to delete this thread');
         }
-        $thread->setIsDeletedByParticipant($this->getAuthenticatedParticipant(), true);
+        $thread->setIsDeletedByParticipant($realParticipant, true);
 
         $this->dispatcher->dispatch(FOSMessageEvents::POST_DELETE, new ThreadEvent($thread));
     }
@@ -62,12 +64,14 @@ class Deleter implements DeleterInterface
     /**
      * {@inheritdoc}
      */
-    public function markAsUndeleted(ThreadInterface $thread)
+    public function markAsUndeleted(ThreadInterface $thread, ParticipantInterface $participant = null)
     {
-        if (!$this->authorizer->canDeleteThread($thread)) {
+        $realParticipant = $participant ?: $this->getAuthenticatedParticipant();
+
+        if (!$this->authorizer->canDeleteThread($thread, $realParticipant)) {
             throw new AccessDeniedException('You are not allowed to delete this thread');
         }
-        $thread->setIsDeletedByParticipant($this->getAuthenticatedParticipant(), false);
+        $thread->setIsDeletedByParticipant($realParticipant, false);
 
         $this->dispatcher->dispatch(FOSMessageEvents::POST_UNDELETE, new ThreadEvent($thread));
     }
