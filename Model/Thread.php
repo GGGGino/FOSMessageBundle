@@ -4,6 +4,7 @@ namespace FOS\MessageBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 
 /**
  * Abstract thread model.
@@ -182,6 +183,18 @@ abstract class Thread implements ThreadInterface
         return $this->getMessages()->last();
     }
 
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLastMessages(int $number = 10)
+    {
+        $criteria = Criteria::create()
+            ->orderBy(array('id' => Criteria::DESC))
+            ->setMaxResults($number);
+
+        return $this->messages->matching($criteria);
+    }
     /**
      * {@inheritdoc}
      */
